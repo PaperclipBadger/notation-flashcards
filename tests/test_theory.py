@@ -36,7 +36,7 @@ def get_keysig_root(i: int, mode: Mode) -> NoteName:
 def test_spelling(mode: Mode) -> None:
     # every scale should be spelled with every letter name once
     letters = set('ABCDEFG')
-    for i in range(-7, 12):
+    for i in range(-8, 13):
         scale = KeySignature(get_keysig_root(i, mode=Mode.MAJOR), mode=mode)
         assert set(scale.name(n).letter for n in scale.notes) == letters
 
