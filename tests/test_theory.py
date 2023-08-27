@@ -49,10 +49,10 @@ def test_major_sharps(root: Note, num_sharps: int) -> None:
     scale = KeySignature(root, Mode.MAJOR)
     names = (scale.name(n) for n in scale.notes)
 
-    counts = collections.Counter(name.accidental.value for name in names)
+    counts = collections.Counter(name.accidental for name in names)
 
-    assert counts[Accidental.SHARP.value] == num_sharps
-    assert counts[Accidental.NONE.value] == 7 - num_sharps
+    assert counts[Accidental.SHARP] == num_sharps
+    assert counts[Accidental.NONE] == 7 - num_sharps
 
 
 @pytest.mark.parametrize(
@@ -63,10 +63,10 @@ def test_minor_sharps(root: Note, num_sharps: int) -> None:
     scale = KeySignature(root, Mode.MINOR)
     names = (scale.name(n) for n in scale.notes)
 
-    counts = collections.Counter(name.accidental.value for name in names)
+    counts = collections.Counter(name.accidental for name in names)
 
-    assert counts[Accidental.SHARP.value] == num_sharps
-    assert counts[Accidental.NONE.value] == 7 - num_sharps
+    assert counts[Accidental.SHARP] == num_sharps
+    assert counts[Accidental.NONE] == 7 - num_sharps
 
 
 @pytest.mark.parametrize(
@@ -77,10 +77,10 @@ def test_major_sharps(root: Note, num_flats: int) -> None:
     scale = KeySignature(root, Mode.MAJOR)
     names = (scale.name(n) for n in scale.notes)
 
-    counts = collections.Counter(name.accidental.value for name in names)
+    counts = collections.Counter(name.accidental for name in names)
 
-    assert counts[Accidental.FLAT.value] == num_flats
-    assert counts[Accidental.NONE.value] == 7 - num_flats
+    assert counts[Accidental.FLAT] == num_flats
+    assert counts[Accidental.NONE] == 7 - num_flats
 
 
 @pytest.mark.parametrize(
@@ -91,7 +91,7 @@ def test_minor_flats(root: Note, num_flats: int) -> None:
     scale = KeySignature(root, Mode.MINOR)
     names = (scale.name(n) for n in scale.notes)
 
-    counts = collections.Counter(name.accidental.value for name in names)
+    counts = collections.Counter(name.accidental for name in names)
 
-    assert counts[Accidental.FLAT.value] == num_flats
-    assert counts[Accidental.NONE.value] == 7 - num_flats
+    assert counts[Accidental.FLAT] == num_flats
+    assert counts[Accidental.NONE] == 7 - num_flats

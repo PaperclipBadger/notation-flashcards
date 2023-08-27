@@ -14,27 +14,21 @@ Note = typing.NewType('Note', int)
 
 class Accidental(enum.Enum):
     NONE = 0
-    FLAT = 'f'
-    DOUBLEFLAT = 'bb'
-    NATURAL = 'n'
-    SHARP = 's'
-    DOUBLESHARP = 'ss'
+    DOUBLEFLAT = 2
+    FLAT = 1
+    NATURAL = 3
+    SHARP = 4
+    DOUBLESHARP = 5
 
     @property
     def neoscore(self) -> str:
-        return self.value
+        table = ('', 'ff', 'f', 'n', 's', 'ss')
+        return table[self.value]
 
     @property
     def unicode(self) -> str:
-        table = {
-            Accidental.NONE: '',
-            Accidental.DOUBLEFLAT: '𝄫',
-            Accidental.FLAT: '♭',
-            Accidental.NATURAL: '♮',
-            Accidental.SHARP: '♯',
-            Accidental.DOUBLESHARP: '𝄪',
-        }
-        return table[self]
+        table = ('', '𝄫', '♭', '♮', '♯', '𝄪')
+        return table[self.value]
     
     def __eq__(self, other) -> bool:
         if isinstance(other, Accidental):
@@ -44,6 +38,9 @@ class Accidental(enum.Enum):
                 return True
             else:
                 return self.value == other.value
+    
+    def __hash__(self) -> int:
+        return hash(0) if self == Accidental.NONE else hash(self.value)
 
 
 class Mode(enum.IntEnum):
@@ -150,10 +147,12 @@ class Scale:
 
 class KeySignature:
     root: Note
+    mode: Mode
     notes: typing.Sequence[Note]
 
     def __init__(self, root: NoteName, mode: Mode) -> None:
         self.root = root.note
+        self.mode = mode
 
         diatonic_root = self.root - DIATONIC_SCALE[mode]
         self.notes = [

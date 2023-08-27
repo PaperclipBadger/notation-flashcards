@@ -6,23 +6,29 @@ from notation_flashcards import theory
 
 
 
-notes = ['c', 'cs', 'd', 'ds', 'e', 'f', 'fs', 'g', 'gs', 'a', 'as', 'b']
-
-
-def render_chord(scale: theory.Scale, chord: tuple[theory.Note], path: pathlib.Path) -> None:
+def render_chord(keysig: theory.KeySignature, chord: tuple[theory.Note], path: pathlib.Path) -> None:
     neoscore.setup()
     group = StaffGroup()
     width = Mm(20)
 
-    signature = notes[scale.root % 12] + '_major'
+    assert keysig.mode in (theory.Mode.MAJOR, theory.Mode.MINOR)
+
+    root_name = keysig.name(keysig.root)
+    keysig_string = ''.join(
+        (
+            root_name.letter.lower(),
+            root_name.accidental.neoscore,
+            '_major' if keysig.mode == theory.Mode.MAJOR else '_minor',
+        )
+    )
 
     treble = Staff(ORIGIN, None, width, group)
     Clef(ZERO, treble, 'treble')
-    KeySignature(ZERO, treble, signature)
+    KeySignature(ZERO, treble, keysig_string)
 
     bass = Staff((ZERO, treble.unit(8)), None, width, group)
     Clef(ZERO, bass, 'bass')
-    KeySignature(ZERO, bass, signature)
+    KeySignature(ZERO, bass, keysig_string)
 
     Brace(group)
     SystemLine(group)
@@ -39,12 +45,12 @@ def render_chord(scale: theory.Scale, chord: tuple[theory.Note], path: pathlib.P
 
 
 if __name__ == "__main__":
-    scale = theory.WesternScale(0, theory.Mode.MAJOR)
+    scale = theory.KeySignature(theory.NoteName('C'), theory.Mode.MAJOR)
     chord = (0, 4, 7)
     render_chord(scale, chord, 'a.png')
     print('a', [str(scale.name(i)) for i in chord])
 
-    scale = theory.WesternScale(1, theory.Mode.MAJOR)
-    chord = (-2, -4, -7)
+    scale = theory.KeySignature(theory.NoteName('C', theory.Accidental.SHARP), theory.Mode.MAJOR)
+    chord = (-3, -4, -7)
     render_chord(scale, chord, 'b.png')
     print('b', [str(scale.name(i)) for i in chord])
