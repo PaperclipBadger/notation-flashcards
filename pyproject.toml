@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "notation-flashcards"
+version = "0.1.0"
+description = "Generates flashcards for music notation"
+authors = ["Blaine Rogers <blaine.w.rogers@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+neoscore = "^0.1.13"
+genanki = "^0.13.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
