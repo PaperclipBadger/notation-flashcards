@@ -1,13 +1,18 @@
-import pathlib
+import typing
 
 from neoscore.common import *
 
 from notation_flashcards import theory
 
 
+neoscore.setup()
 
-def render_chord(keysig: theory.KeySignature, chord: tuple[theory.Note], path: pathlib.Path) -> None:
-    neoscore.setup()
+def render_chord(
+    keysig: theory.KeySignature,
+    chord: tuple[theory.Note],
+    staff: typing.Literal['treble', 'bass'],
+    path: str,
+) -> None:
     group = StaffGroup()
     width = Mm(20)
 
@@ -33,24 +38,19 @@ def render_chord(keysig: theory.KeySignature, chord: tuple[theory.Note], path: p
     Brace(group)
     SystemLine(group)
 
-    if sum(note >= 0 for note in chord) >= 2:
+    Barline(ZERO, group)
+
+    if staff == 'treble':
         staff = treble
     else:
         staff = bass
 
-    Chordrest(staff.unit(4), staff, [str(scale.engrave(note)) for note in chord], (1, 4))
+    Chordrest(staff.unit(4), staff, [str(keysig.engrave(note)) for note in chord], (1, 4))
 
-    neoscore.render_image(rect=None, dest=path, wait=True)
-    neoscore.shutdown()
+    # neoscore forgets to close its file handles, so use bytearray
+    neoscore.render_image(rect=(-Mm(23), -Mm(5), Mm(45), Mm(35)), dest=path, wait=True)
 
+    # reset, but don't tear down Qt (because it throws a bunch of error messages and takes ages to boot)
+    neoscore.document = Document(neoscore.document.paper)
+    neoscore.app_interface.clear_scene()
 
-if __name__ == "__main__":
-    scale = theory.KeySignature(theory.NoteName('C'), theory.Mode.MAJOR)
-    chord = (0, 4, 7)
-    render_chord(scale, chord, 'a.png')
-    print('a', [str(scale.name(i)) for i in chord])
-
-    scale = theory.KeySignature(theory.NoteName('C', theory.Accidental.SHARP), theory.Mode.MAJOR)
-    chord = (-3, -4, -7)
-    render_chord(scale, chord, 'b.png')
-    print('b', [str(scale.name(i)) for i in chord])

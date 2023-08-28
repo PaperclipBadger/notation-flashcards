@@ -2,7 +2,6 @@ import typing
 
 import dataclasses
 import enum
-import itertools
 
 
 DIATONIC_SCALE = (0, 2, 4, 5, 7, 9, 11)
@@ -14,8 +13,8 @@ Note = typing.NewType('Note', int)
 
 class Accidental(enum.Enum):
     NONE = 0
-    DOUBLEFLAT = 2
-    FLAT = 1
+    DOUBLEFLAT = 1
+    FLAT = 2
     NATURAL = 3
     SHARP = 4
     DOUBLESHARP = 5
@@ -106,16 +105,16 @@ class ChromaticScale:
     notes = tuple(range(12))
     names = (
         NoteName('C'),
-        NoteName('C', Accidental.SHARP),
+        NoteName('D', Accidental.FLAT),
         NoteName('D'),
-        NoteName('D', Accidental.SHARP),
+        NoteName('E', Accidental.FLAT),
         NoteName('E'),
         NoteName('F'),
-        NoteName('F', Accidental.SHARP),
+        NoteName('G', Accidental.FLAT),
         NoteName('G'),
-        NoteName('G', Accidental.SHARP),
+        NoteName('A', Accidental.FLAT),
         NoteName('A'),
-        NoteName('A', Accidental.SHARP),
+        NoteName('B', Accidental.FLAT),
         NoteName('B'),
     )
 
@@ -148,14 +147,14 @@ class Scale:
 class KeySignature:
     root: Note
     mode: Mode
-    notes: typing.Sequence[Note]
+    scale: typing.Sequence[Note]
 
     def __init__(self, root: NoteName, mode: Mode) -> None:
         self.root = root.note
         self.mode = mode
 
         diatonic_root = self.root - DIATONIC_SCALE[mode]
-        self.notes = [
+        self.scale = [
             (diatonic_root + offset) % 12
             for offset in rotate(mode, DIATONIC_SCALE)
         ]
@@ -168,7 +167,7 @@ class KeySignature:
             for i in range(7)
         ]
 
-        for note, letter in zip(self.notes, letters):
+        for note, letter in zip(self.scale, letters):
             for accidental in Accidental:
                 candidate = NoteName(letter, accidental)
                 if candidate.note == note:
@@ -177,7 +176,7 @@ class KeySignature:
             else:
                 assert False, f"could not label note {note} with {letter}"
 
-        unused = (i for i in range(12) if i not in self.notes)
+        unused = (i for i in range(12) if i not in self.scale)
         for offset in unused:
             # notes that aren't in the scale get their standard name
             self.names[offset] = ChromaticScale.name(offset)
@@ -190,7 +189,7 @@ class KeySignature:
     def engrave(self, note: Note) -> EngravingInfo:
         octave, index = divmod(note, 12)
         template = self.name(note)
-        if note % 12 in self.notes:
+        if note % 12 in self.scale:
             # if it's in the scale, we engrave without an accidental
             # the accidental is already in the key signature
             return EngravingInfo(
@@ -225,4 +224,56 @@ T = typing.TypeVar('T')
 def rotate(n: int, seq: typing.Sequence[T]) -> typing.Generator[T, None, None]:
     for i in range(len(seq)):
         yield seq[(i + n) % len(seq)]
+        
 
+class ChordKind(enum.IntEnum):
+    MAJOR = 0
+    MINOR = 1
+    SEVENTH = 2
+    DIMINISHED = 3
+
+    @property
+    def offsets(self):
+        table = (0, 4, 7), (0, 3, 7), (0, 4, 10), (0, 3, 9)
+        return table[self.value]
+
+    def name(self, root: NoteName) -> str:
+        if self == ChordKind.MAJOR:
+            return str(root)
+        elif self == ChordKind.MINOR:
+            return str(root) + 'm'
+        elif self == ChordKind.SEVENTH:
+            return str(root) + '7'
+        elif self == ChordKind.DIMINISHED:
+            return str(root) + '°'
+
+
+def accordion_chord(root: Note, kind: ChordKind) -> tuple[Note, Note, Note]:
+    return tuple(root.note - 24 + offset for offset in kind.offsets)
+
+
+CIRCLE_OF_FIFTHS = 'FCGDAEB'
+
+def circle(i: int, mode: Mode = Mode.MAJOR) -> NoteName:
+    if mode == Mode.MAJOR:
+        offset = 1
+    elif mode == Mode.MINOR:
+        offset = 4
+
+    rank, position = divmod(i + offset, 7)
+    letter = CIRCLE_OF_FIFTHS[position]
+
+    if rank == -1:
+        accidental = Accidental.FLAT
+    elif rank == 0:
+        accidental = Accidental.NONE
+    elif rank == 1:
+        accidental = Accidental.SHARP
+    
+    return NoteName(letter, accidental)
+
+
+def invert(n: int, chord: tuple[Note, Note, Note]) -> tuple[Note, Note, Note]:
+    for _ in range(n):
+        chord = chord[1:] + (chord[0] + 12,)
+    return chord
