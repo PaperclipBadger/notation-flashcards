@@ -17,6 +17,7 @@ class ScoreRenderer(contextlib.AbstractContextManager):
     def __init__(self, keysig: KeySignature, path: str) -> None:
         global _score_exists
         assert not _score_exists, "Only one Score object can exist at a time"
+        _score_exists = True
 
         assert keysig.mode in (theory.Mode.MAJOR, theory.Mode.MINOR)
 
@@ -64,7 +65,7 @@ class ScoreRenderer(contextlib.AbstractContextManager):
 
         Chordrest(staff.unit(4), staff, [str(self.keysig.engrave(note)) for note in notes], (1, 4))
 
-    def __enter__(self) -> Any:
+    def __enter__(self) -> typing.Any:
         return super().__enter__()
     
     def __exit__\
