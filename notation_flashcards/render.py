@@ -49,7 +49,7 @@ class ScoreRenderer(contextlib.AbstractContextManager):
 
         Barline(ZERO, self.group)
 
-    def add_note(self, note: theory.Note, staff: typing.Literat['treble', 'bass']) -> None:
+    def add_note(self, note: theory.Note, staff: typing.Literal['treble', 'bass']) -> None:
         self.add_chord((note,), staff)
 
     def add_chord\
