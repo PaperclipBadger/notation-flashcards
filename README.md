@@ -22,7 +22,7 @@ A "note" note teaches you to name a note in a given key signature:
 | Octave        | 0                 |
 | Score         | ![score showing treble and bass staves, key signature with two sharps, crotchet on F above middle C](score_001038.png) |
 
-We generate one Anki note for each note of the chormatic scale across four octaves,
+We generate one Anki note for each note of the chromatic scale across four octaves,
 starting two octaves below middle C and ending two octaves above.
 Chromatic scale notes are named such that each letter A-G appears once,
 e.g. the note 6 semitones above C is called F♯ in the key of D but G♭ in the key of B♭.
