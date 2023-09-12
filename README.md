@@ -11,7 +11,7 @@ This will generate a file called `accordion.apkg` which you can then import into
 
 ## What's in the deck?
 
-The deck contains two kinds notes, "note" notes and "chord" notes.
+The deck contains two kinds of Anki notes, "note" notes and "chord" notes.
 A "note" note teaches you to name a note in a given key signature:
 
 | *Field*       | *Example Content* |
@@ -22,7 +22,9 @@ A "note" note teaches you to name a note in a given key signature:
 | Octave        | 0                 |
 | Score         | ![score showing treble and bass staves, key signature with two sharps, crotchet on F above middle C](score_001038.png) |
 
-Notes are named such that each letter A-G appears once,
+We generate one Anki note for each note of the chormatic scale across four octaves,
+starting two octaves below middle C and ending two octaves above.
+Chromatic scale notes are named such that each letter A-G appears once,
 e.g. the note 6 semitones above C is called F♯ in the key of D but G♭ in the key of B♭.
 
 A "chord" note teaches you to name a chord in a given key signature:
@@ -34,9 +36,9 @@ A "chord" note teaches you to name a chord in a given key signature:
 | Chord Name    | Gm                |
 | Inversion     | 1                 |
 | Staff         | bass              |
-| Score         | ![score showing treble and bass staves, key signature with two flats, Gm 1st inversion chord on bass staff](score_0010425.png) |
+| Score         | ![score showing treble and bass staves, key signature with two flats, Gm 1st inversion chord on bass staff](score_001425.png) |
 
-There is a note for every chord that an accordion can play, in every inversion, on both staves.
+There is an Anki note for every three-note chord that a Stradella bass accordion can play (major C, minor Cm, seventh C7 and diminished C°), in every inversion, on both staves.
 
 The notes and chords are taught key by key, in the order of number of sharps and flats (C, G, F, D, B♭, ...).
 
